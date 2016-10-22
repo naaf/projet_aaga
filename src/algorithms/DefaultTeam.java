@@ -19,7 +19,7 @@ public class DefaultTeam {
   public ArrayList<Point> calculConnectedDominatingSet(ArrayList<Point> points, int edgeThreshold) {
     S_MIS s= new S_MIS();
     ArrayList<PointMIS> psMIS = s.mis(points, edgeThreshold);
-    s.algorithmA(psMIS);
+//    s.algorithmA(psMIS);
     ArrayList<Point> psDom = (ArrayList<Point>) psMIS.stream()
     		.filter(p-> p.getC() == Color.BLACK)
     		.map(p -> (Point) p)
