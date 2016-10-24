@@ -23,7 +23,7 @@ public class DefaultTeam {
     S_MIS mis = new S_MIS();
 	result =  (ArrayList<PointMIS>)mis.mis(points, edgeThreshold).stream().filter(p-> p.getC() == Color.BLACK)
 			.collect(Collectors.toList());
-	return mis.toPoints(result);
+	return mis.constructCDS(points, edgeThreshold);
   }
   
   

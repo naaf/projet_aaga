@@ -24,13 +24,13 @@ public class S_MIS {
 		psMIS.forEach(p -> {
 			p.setNeighbors(neighbors(p, psMIS, edgeThreshold));
 		});
-		int id = 1;
+
 		Random r = new Random();
 
 		// We also designate a host as the leader.
 		PointMIS pointDom = psMIS.get(r.nextInt(psMIS.size()));
 		pointDom.setC(Color.BLACK);
-		pointDom.setId(id++);
+
 		while (true) {
 			if (psMIS.stream().noneMatch(p -> p.getC() == Color.WHITE)) {
 				break;
@@ -40,7 +40,6 @@ public class S_MIS {
 			for (PointMIS p : pointDom.getNeighbors()) {
 				if (p.getC() == Color.WHITE) {
 					p.setC(Color.GRAY);
-					p.setDom(pointDom);
 
 					// white broadcasts message DOMINATEE.
 					p.getNeighbors().stream().filter(q -> q.getC() == Color.WHITE).forEach(q -> {
@@ -51,16 +50,14 @@ public class S_MIS {
 
 			// An active white host with highest (d*, id)
 			// among all of its active white neighbors will color itself black
-			
+
 			pointDom = psMIS.stream().filter(p -> p.getC() == Color.WHITE && p.isActive())
 					.max((u, v) -> Long.compare(u.degree(), v.degree())).get();
 			pointDom.setC(Color.BLACK);
-			pointDom.setId(id++);
 
 		}
 		// in a unit disk graph, every node is adjacent to at most
 		// five independent nodes
-		
 
 		return psMIS;
 	}
@@ -81,26 +78,62 @@ public class S_MIS {
 	 */
 	public ArrayList<Point> constructCDS(List<Point> points, int edgeThreshold) {
 
-		return toPoints(algorithmA(mis(points, edgeThreshold)));
+		return toPoints(algorithmA(mis(points, edgeThreshold), edgeThreshold));
 	}
 
-	public List<PointMIS> algorithmA(List<PointMIS> psMIS) {
+	public List<PointMIS> algorithmA(List<PointMIS> psMIS, int edgeThreshold) {
 
-		List<PointMIS> psBlack = psMIS.stream().filter(p -> p.getC() == Color.BLACK).collect(Collectors.toList());
-		PointMIS grayToBlue = null;
+		List<PointMIS> psBlack = new ArrayList<>();
+		List<PointMIS> psGray = new ArrayList<>();
 		List<PointMIS> psBlue = new ArrayList<>();
+		PointMIS grayToBlue = null;
+		int smallestID;
+		int id = 1;
+	
+		for (PointMIS p : psMIS) {
+			if (p.getC() == Color.BLACK) {
+				psBlack.add(p);
+				p.setId(id++);
+			} else {
+				p.setC(Color.GRAY);
+			}
+			p.setNeighbors(neighbors(p, psMIS, edgeThreshold));
+
+		}
+		
 		for (int i = 5; i >= 2; i--) {
 
 			while ((grayToBlue = grayConnectKBlack(psBlack, psMIS, i)) != null) {
 				grayToBlue.setC(Color.BLUE);
 				psBlue.add(grayToBlue);
 				
+				// smallest id from neighbors black
+				smallestID = grayToBlue.getNeighbors().stream()
+						.map(p -> p.getId())
+						.min((u, v) -> Integer.compare(u, v)).get();
+				grayToBlue.setId(smallestID);
+				
+				
+				// update 
+				for (PointMIS voisin : grayToBlue.getNeighbors()) {
+					if(voisin.getC() == Color.GRAY)
+						continue;
+					for( PointMIS pb : psBlack ){
+						if( pb.getId() == voisin.getId()){
+							pb.setId(smallestID);
+						}
+					}
+					voisin.setId(smallestID);
+					
+				}
+
 			}
 
 		}
-		 psBlue.addAll(psBlack);
-		 return psBlue;
-		
+		System.out.println("blueSize >>>> " + psBlue.size() );
+		psBlue.addAll(psBlack);
+		return psBlue;
+
 	}
 
 	private PointMIS grayConnectKBlack(List<PointMIS> psBlack, List<PointMIS> psMIS, int k) {
@@ -109,11 +142,13 @@ public class S_MIS {
 			if (p.getC() != Color.GRAY) {
 				continue;
 			}
-			p.getNeighbors().stream().filter(node -> node.getC() == Color.BLACK).forEach( q->{
+			p.getNeighbors().stream().filter(node -> node.getC() == Color.BLACK).forEach(q -> {
 				ids.add(q.getId());
+
 			});
-			if (k == ids.size())
+			if (k == ids.size()) {
 				return p;
+			}
 		}
 		return null;
 	}
@@ -127,5 +162,5 @@ public class S_MIS {
 
 		return result;
 	}
-	
+
 }

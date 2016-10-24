@@ -7,7 +7,6 @@ import java.util.List;
 public class PointMIS extends java.awt.Point implements Cloneable {
 
 	private Color c;
-	private PointMIS dom;
 	private List<PointMIS> neighbors;
 	private boolean active;
 	private int id;
@@ -41,14 +40,6 @@ public class PointMIS extends java.awt.Point implements Cloneable {
 
 	public void setC(Color c) {
 		this.c = c;
-	}
-
-	public PointMIS getDom() {
-		return dom;
-	}
-
-	public void setDom(PointMIS dom) {
-		this.dom = dom;
 	}
 
 	public List<PointMIS> getNeighbors() {
