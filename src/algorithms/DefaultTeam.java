@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import core.PointMIS;
@@ -17,14 +18,12 @@ import core.S_MIS;
 
 public class DefaultTeam {
   public ArrayList<Point> calculConnectedDominatingSet(ArrayList<Point> points, int edgeThreshold) {
-    S_MIS s= new S_MIS();
-    ArrayList<PointMIS> psMIS = s.mis(points, edgeThreshold);
-//    s.algorithmA(psMIS);
-    ArrayList<Point> psDom = (ArrayList<Point>) psMIS.stream()
-    		.filter(p-> p.getC() == Color.BLACK)
-    		.map(p -> (Point) p)
-    		.collect(Collectors.toList());
-    return psDom;
+    //REMOVE >>>>>
+    ArrayList<PointMIS> result ;
+    S_MIS mis = new S_MIS();
+	result =  (ArrayList<PointMIS>)mis.mis(points, edgeThreshold).stream().filter(p-> p.getC() == Color.BLACK)
+			.collect(Collectors.toList());
+	return mis.toPoints(result);
   }
   
   

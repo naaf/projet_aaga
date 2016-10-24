@@ -10,6 +10,7 @@ public class PointMIS extends java.awt.Point implements Cloneable {
 	private PointMIS dom;
 	private List<PointMIS> neighbors;
 	private boolean active;
+	private int id;
 
 	public PointMIS(Point p) {
 		super(p);
@@ -19,6 +20,7 @@ public class PointMIS extends java.awt.Point implements Cloneable {
 		super(p);
 		this.c = c;
 		this.active = active;
+		this.id = 0;
 	}
 
 	public PointMIS(PointMIS p) {
@@ -60,5 +62,14 @@ public class PointMIS extends java.awt.Point implements Cloneable {
 	public long degree() {
 		return neighbors.stream().filter(n -> n.getC() == Color.WHITE).count();
 	}
+
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
+	}
+	
 
 }
