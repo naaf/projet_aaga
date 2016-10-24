@@ -109,6 +109,7 @@ public class S_MIS {
 				
 				// smallest id from neighbors black
 				smallestID = grayToBlue.getNeighbors().stream()
+						.filter(n -> n.getC() == Color.BLACK)
 						.map(p -> p.getId())
 						.min((u, v) -> Integer.compare(u, v)).get();
 				grayToBlue.setId(smallestID);
@@ -116,7 +117,7 @@ public class S_MIS {
 				
 				// update 
 				for (PointMIS voisin : grayToBlue.getNeighbors()) {
-					if(voisin.getC() == Color.GRAY)
+					if(voisin.getC() != Color.BLACK)
 						continue;
 					for( PointMIS pb : psBlack ){
 						if( pb.getId() == voisin.getId()){
