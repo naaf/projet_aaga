@@ -43,7 +43,7 @@ public class PointMIS extends java.awt.Point implements Cloneable {
 	}
 
 	public List<PointMIS> getNeighbors() {
-		return neighbors;
+		return this.neighbors;
 	}
 
 	public void setNeighbors(List<PointMIS> neighbors) {

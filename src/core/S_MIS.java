@@ -10,14 +10,20 @@ import java.util.stream.Collectors;
 
 public class S_MIS {
 
+	private int edgeThreshold;
+
+	public S_MIS(int edgeThreshold) {
+		super();
+		this.edgeThreshold = edgeThreshold;
+	}
+
 	/**
 	 * first step of the algo S-MIS
 	 * 
 	 * @param points
 	 * @return MIS
 	 */
-
-	public List<PointMIS> mis(List<Point> points, int edgeThreshold) {
+	public List<PointMIS> mis(List<Point> points) {
 		// init
 		ArrayList<PointMIS> psMIS = (ArrayList<PointMIS>) points.stream().map(p -> new PointMIS(p, Color.WHITE, false))
 				.collect(Collectors.toList());
@@ -76,78 +82,76 @@ public class S_MIS {
 	 * @param pointsMIS
 	 * @return points CDS would have size bounded by (4.8 + ln 5)opt + 1:2.
 	 */
-	public ArrayList<Point> constructCDS(List<Point> points, int edgeThreshold) {
+	public ArrayList<Point> constructCDS(List<Point> points) {
 
-		return toPoints(algorithmA(mis(points, edgeThreshold), edgeThreshold));
+		return toPoints(algorithmA(mis(points)));
 	}
 
-	public List<PointMIS> algorithmA(List<PointMIS> psMIS, int edgeThreshold) {
+	public List<PointMIS> algorithmA(List<PointMIS> psMIS) {
 
 		List<PointMIS> psBlack = new ArrayList<>();
-		List<PointMIS> psGray = new ArrayList<>();
 		List<PointMIS> psBlue = new ArrayList<>();
 		PointMIS grayToBlue = null;
 		int smallestID;
 		int id = 1;
-	
+		int voisinID;
+
 		for (PointMIS p : psMIS) {
 			if (p.getC() == Color.BLACK) {
 				psBlack.add(p);
-				p.setId(id++);
+				p.setId(id);
+				id++;
 			} else {
 				p.setC(Color.GRAY);
 			}
 			p.setNeighbors(neighbors(p, psMIS, edgeThreshold));
-
 		}
-		
+		System.out.println(">>> nb black " + psBlack.size());
+		System.out.println(">>> nb gray " + (psMIS.size() - psBlack.size()));
+
 		for (int i = 5; i >= 2; i--) {
 
 			while ((grayToBlue = grayConnectKBlack(psBlack, psMIS, i)) != null) {
 				grayToBlue.setC(Color.BLUE);
 				psBlue.add(grayToBlue);
-				
+
 				// smallest id from neighbors black
-				smallestID = grayToBlue.getNeighbors().stream()
-						.filter(n -> n.getC() == Color.BLACK)
-						.map(p -> p.getId())
+				smallestID = grayToBlue.getNeighbors().stream().filter(n -> n.getC() == Color.BLACK).map(p -> p.getId())
 						.min((u, v) -> Integer.compare(u, v)).get();
 				grayToBlue.setId(smallestID);
-				
-				
-				// update 
+
+				// update
 				for (PointMIS voisin : grayToBlue.getNeighbors()) {
-					if(voisin.getC() != Color.BLACK)
+					if (voisin.getC() != Color.BLACK)
 						continue;
-					for( PointMIS pb : psBlack ){
-						if( pb.getId() == voisin.getId()){
+					voisinID = voisin.getId();
+					for (PointMIS pb : psBlack) {
+						if (pb.getId() == voisinID) {
 							pb.setId(smallestID);
 						}
 					}
 					voisin.setId(smallestID);
-					
+
 				}
 
 			}
 
 		}
-		System.out.println("blueSize >>>> " + psBlue.size() );
+		System.out.println("blueSize >>>> " + psBlue.size());
 		psBlue.addAll(psBlack);
 		return psBlue;
 
 	}
 
-	private PointMIS grayConnectKBlack(List<PointMIS> psBlack, List<PointMIS> psMIS, int k) {
-		HashSet<Integer> ids = new HashSet<Integer>();
+	public static PointMIS grayConnectKBlack(List<PointMIS> psBlack, List<PointMIS> psMIS, int k) {
+
 		for (PointMIS p : psMIS) {
 			if (p.getC() != Color.GRAY) {
 				continue;
 			}
-			p.getNeighbors().stream().filter(node -> node.getC() == Color.BLACK).forEach(q -> {
-				ids.add(q.getId());
-
-			});
-			if (k == ids.size()) {
+			long iblack = p.getNeighbors().stream().filter(node -> node.getC() == Color.BLACK)
+					.map(node -> node.getId()).distinct().count();
+			if (k == iblack) {
 				return p;
 			}
 		}
