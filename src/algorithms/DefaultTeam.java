@@ -13,17 +13,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import core.AlgoDominant;
-import core.S_MIS;
 import steiner.AlgoSteiner;
 import steiner.Tree2D;
+import core.AlgoDominant;
+import core.S_MIS;
 
 public class DefaultTeam {
 	public ArrayList<Point> calculConnectedDominatingSet(ArrayList<Point> points, int edgeThreshold) {
 
+		lancerTests(edgeThreshold);
 		ArrayList<Point> result;
 		S_MIS mis = new S_MIS(edgeThreshold);
-		lancerTests(edgeThreshold);
 		result = mis.constructCDS(points);
 		return result;
 	}
@@ -31,10 +31,13 @@ public class DefaultTeam {
 //	public ArrayList<Point> calculConnectedDominatingSet(ArrayList<Point> points, int edgeThreshold) {
 //		System.out.println("seuil " + edgeThreshold);
 //		ArrayList<Point> result = new ArrayList<Point>();
+//		long time = System.currentTimeMillis();
 //		AlgoDominant algo = new AlgoDominant(edgeThreshold);
-//		AlgoSteiner algoSteiner = new AlgoSteiner();
 //		ArrayList<Point> dom = algo.calculDominatingSet(points);
+//		AlgoSteiner algoSteiner = new AlgoSteiner();
 //		Tree2D resultSteiner = algoSteiner.calculSteiner(points, edgeThreshold, dom);
+//		time = System.currentTimeMillis()-time;
+//		System.out.println(">>>>>>> time " + time);
 //		result.addAll(dom);
 //		result.addAll(resultSteiner.getList());
 //		Set<Point> s = new HashSet<Point>(result);
@@ -45,39 +48,46 @@ public class DefaultTeam {
 	
 	public void lancerTests(int edgeThreshold){
 		final String fichier = "testbeds/input";
-		List<Point> resultat = null;
-		List<Point> resultat2 = null;
 		List<Point> points = null;
 		S_MIS mis = new S_MIS(edgeThreshold);
-		AlgoDominant algo = new AlgoDominant(edgeThreshold);
-		AlgoSteiner algoSteiner = new AlgoSteiner();
+		AlgoSteiner algoSteiner ;
+		AlgoDominant algo = new AlgoDominant(edgeThreshold);;
 		long time = 0;
 		// point.x ==> size of mis ,  point.y ==> time execution
-		List<Point> tests = new ArrayList<>();
-		List<Point> tests2 = new ArrayList<>();
+		List<Point> pointsMis = new ArrayList<>();
+		List<Point> pointsSteiner = new ArrayList<>();
+		List<Point> testsSMIS = new ArrayList<>();
+		List<Point> testsSteiner = new ArrayList<>();
+		List<Point> dom;
+		Tree2D resultSteiner;
+		Set<Point> s ;
 		for (int i = 0; i < 100; i++) {
 			points = readFromFile( fichier + i + ".points");
+			System.out.println(" debut test smis" + i + " size >>" + points.size());
+			algoSteiner = new AlgoSteiner();
 			
 			// smis
 //			time = System.currentTimeMillis();
-//			resultat = mis.constructCDS(points);
+//			pointsMis = mis.constructCDS(points);
 //			time = System.currentTimeMillis()-time;
-//			tests.add(new Point(resultat.size(),(int) time));
-//			System.out.println(fichier + i + " >>>  teste ...");
+//			testsSMIS.add(new Point(pointsMis.size(),(int) time));
+//			System.out.println(fichier + i + " >>> fin teste  smis...");
 			
 			// steiner
 			time = System.currentTimeMillis();
-			List<Point> dom = algo.calculDominatingSet(points);
-			Tree2D resultSteiner = algoSteiner.calculSteiner(points, edgeThreshold, dom);
-			resultat2.addAll(dom);
-			resultat2.addAll(resultSteiner.getList());
-			Set<Point> s = new HashSet<Point>(resultat2);
-			resultat2 = new  ArrayList<Point>(s);
+			dom = algo.calculDominatingSet((ArrayList<Point>) points);
+			resultSteiner = algoSteiner.calculSteiner(points, edgeThreshold, dom);
+			pointsSteiner.addAll(dom);
+			pointsSteiner.addAll(resultSteiner.getList());
+			s = new HashSet<Point>(pointsSteiner);
+			pointsSteiner = new  ArrayList<Point>(s);
 			time = System.currentTimeMillis()-time;
-			tests2.add(new Point(resultat.size(),(int) time));
-			System.out.println(fichier + i + " steiner >>>  teste ...");
+			testsSteiner.add(new Point(pointsSteiner.size(),(int) time));
+			System.out.println(fichier + i + " >>> fin teste  steiner...");
 		}
-		saveToFile("test_resultat/steiner", tests);
+		System.out.println(" fin total tests >>>>>> ");
+		saveToFile("test_resultat/steiner", testsSteiner);
+//		saveToFile("test_resultat/smis", testsSteiner);
 	}
 	
 	// FILE PRINTER
@@ -100,6 +110,8 @@ public class DefaultTeam {
 		}
 	}
 
+	
+	
 	public static void printToFile(String filename, List<Point> points) {
 		try {
 			PrintStream output = new PrintStream(new FileOutputStream(filename));

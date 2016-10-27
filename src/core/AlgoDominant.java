@@ -166,6 +166,27 @@ public class AlgoDominant {
 
 		}while(Result.size() > ResultTmp.size());
 
+
+
+
+		/*for (int i = 0; i < 5; i++) {
+			ResultTmp = new ArrayList<PointPond>(Result);
+			Collections.shuffle(ResultTmp);
+			Collections.shuffle(pointsTmp);
+			ResultTmp = calculOptPos(points, ResultTmp);
+
+			if(ResultTmp != null){
+				if(Result.size() > ResultTmp.size())
+					Result = ResultTmp;
+			}else{
+				bloq++;
+				if(bloq >2)
+					break;
+			}
+			System.out.println("RESULT SIZE : " + Result.size());
+
+
+		}*/
 		return Result;
 	}
 
@@ -270,7 +291,50 @@ public class AlgoDominant {
 		}
 		return ensNo;
 	}
-	
+	/*public ArrayList<PointPond> calculOpt(List<PointPond> ps, ArrayList<PointPond> ensNo) {
+		ArrayList<PointPond> tmpEnsNo = new ArrayList<>(ensNo);
+		ArrayList<PointPond> voisinDom, voisin;
+		Random rand = new Random();
+		PointPond domA, domB, domC;
+
+		for (int i = 0; i < 5; i++) {	
+			rand = new Random();
+			domA = tmpEnsNo.get(rand.nextInt(tmpEnsNo.size()));
+			if(domA.poid < 2000){
+				voisinDom = neighborPlus(domA, ensNo, 2);
+				if(voisinDom.isEmpty())
+					continue;
+				for (int j = 0; j < voisinDom.size(); j++) {
+					domB = voisinDom.get(j);
+
+					if(!domA.equals(domB)){
+						voisin = neighborPlus(domB, ps, 2);
+						voisin = neighborPlus(domA, voisin, 2);
+						if(voisin.isEmpty())
+							continue;
+						for(PointPond p : voisin){
+							tmpEnsNo.remove(domA);
+							tmpEnsNo.remove(domB);
+							tmpEnsNo.add(p);
+
+							if (!(domB.equals(p) || domA.equals(p)) && ensNo.size() > tmpEnsNo.size() && isValide(ps, tmpEnsNo)) {
+
+								return tmpEnsNo;
+							}
+							domA.poid++;
+							tmpEnsNo.add(domA); 
+							tmpEnsNo.add(domB);
+							tmpEnsNo.remove(p);
+
+						}
+					}
+				}
+			}
+
+
+		}
+		return ensNo;
+	}*/
 
 	public ArrayList<PointPond> calculOptPos(List<PointPond> ps, ArrayList<PointPond> ensNo) {
 		ArrayList<PointPond> tmpEnsNo = new ArrayList<>(ensNo);
@@ -336,8 +400,8 @@ public class AlgoDominant {
 	}
 
 
-	public ArrayList<Point> calculDominatingSet(List<Point> points) {
-		return PointPond.listePoint(localSearching(PointPond.listePondere(points)));
+	public ArrayList<Point> calculDominatingSet(ArrayList<Point> points) {
+		return PointPond.listePoint(glouton(PointPond.listePondere(points)));
 	}
 
 

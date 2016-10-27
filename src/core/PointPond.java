@@ -1,8 +1,8 @@
 package core;
 
 import java.awt.Point;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.List;
 
 public class PointPond extends Point{
 	int poid;
@@ -12,7 +12,7 @@ public class PointPond extends Point{
 		poid=0;
 	}
 	
-	public static ArrayList<PointPond> listePondere(List<Point> points){
+	public static ArrayList<PointPond> listePondere(ArrayList<Point> points){
 		ArrayList<PointPond> list = new ArrayList<PointPond>();
 		for(Point p:points){
 			list.add(new PointPond(p));
