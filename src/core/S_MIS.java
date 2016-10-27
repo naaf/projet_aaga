@@ -24,6 +24,8 @@ public class S_MIS {
 	 * @return MIS
 	 */
 	public List<PointMIS> mis(List<Point> points) {
+		if(!UDGraph.isConnexe(points, edgeThreshold))
+			System.out.println(" erreur graphe n'est pas connexe ");
 		// init
 		ArrayList<PointMIS> psMIS = (ArrayList<PointMIS>) points.stream().map(p -> new PointMIS(p, Color.WHITE, false))
 				.collect(Collectors.toList());
@@ -106,8 +108,6 @@ public class S_MIS {
 			}
 			p.setNeighbors(neighbors(p, psMIS, edgeThreshold));
 		}
-		System.out.println(">>> nb black " + psBlack.size());
-		System.out.println(">>> nb gray " + (psMIS.size() - psBlack.size()));
 
 		for (int i = 5; i >= 2; i--) {
 
@@ -137,7 +137,6 @@ public class S_MIS {
 			}
 
 		}
-		System.out.println("blueSize >>>> " + psBlue.size());
 		psBlue.addAll(psBlack);
 		return psBlue;
 

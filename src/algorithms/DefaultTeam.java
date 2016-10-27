@@ -1,6 +1,5 @@
 package algorithms;
 
-import java.awt.Color;
 import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -10,7 +9,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
+import java.util.List;
 
 import core.S_MIS;
 
@@ -19,21 +18,37 @@ public class DefaultTeam {
 
 		ArrayList<Point> result;
 		S_MIS mis = new S_MIS(edgeThreshold);
-		result = mis.toPoints(mis.mis(points)
-				.stream().filter(p -> p.getC() == Color.BLACK)
-				.collect(Collectors.toList()));
-		
 		result = mis.constructCDS(points);
 		return result;
 	}
 
+	
+	public void lancerTests(int edgeThreshold){
+		final String fichier = "testbeds/input";
+		List<Point> resultat = null;
+		List<Point> points = null;
+		S_MIS mis = new S_MIS(edgeThreshold);
+		long time = 0;
+		// point.x ==> size of mis ,  point.y ==> time execution
+		List<Point> tests = new ArrayList<>();
+		for (int i = 0; i < 100; i++) {
+			points = readFromFile( fichier + i + ".points");
+			time = System.currentTimeMillis();
+			resultat = mis.constructCDS(points);
+			time = System.currentTimeMillis()-time;
+			tests.add(new Point(resultat.size(),(int) time));
+			System.out.println(fichier + i + " >>>  teste ...");
+		}
+		saveToFile("test_resultat/mis", tests);
+	}
+	
 	// FILE PRINTER
-	private void saveToFile(String filename, ArrayList<Point> result) {
+	public static void saveToFile(String filename, List<Point> result) {
 		int index = 0;
 		try {
 			while (true) {
 				BufferedReader input = new BufferedReader(
-						new InputStreamReader(new FileInputStream(filename + Integer.toString(index) + ".points")));
+						new InputStreamReader(new FileInputStream(filename + ".points")));
 				try {
 					input.close();
 				} catch (IOException e) {
@@ -43,11 +58,11 @@ public class DefaultTeam {
 				index++;
 			}
 		} catch (FileNotFoundException e) {
-			printToFile(filename + Integer.toString(index) + ".points", result);
+			printToFile(filename + ".points", result);
 		}
 	}
 
-	private void printToFile(String filename, ArrayList<Point> points) {
+	public static void printToFile(String filename, List<Point> points) {
 		try {
 			PrintStream output = new PrintStream(new FileOutputStream(filename));
 			int x, y;
@@ -60,7 +75,7 @@ public class DefaultTeam {
 	}
 
 	// FILE LOADER
-	private ArrayList<Point> readFromFile(String filename) {
+	public List<Point> readFromFile(String filename) {
 		String line;
 		String[] coordinates;
 		ArrayList<Point> points = new ArrayList<Point>();

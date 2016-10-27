@@ -3,43 +3,35 @@ package core;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class UDGraph<T extends Point> {
-	private int edgeThreshold;
+public class UDGraph {
 
-	public UDGraph(int threshold) {
-		this.edgeThreshold = threshold;
-	}
-
-	public List<T> neighbors(T point, List<T> vertices) {
+	public static <T extends Point> List<T> neighbors(T point, List<T> vertices, int edgeThreshold) {
 		List<T> neighbors = new ArrayList<T>();
 		for (T p : vertices) {
-			if (!point.equals(p) && point.distance(p) <= this.edgeThreshold)
+			if (!point.equals(p) && point.distance(p) <= edgeThreshold)
 				neighbors.add(p);
 		}
 		return neighbors;
 	}
+	
+	public static boolean isConnexe(List<Point> points, int edgeThreshold) {
+		List<Point> f = new ArrayList<Point>();
+		List<Point> marques = new ArrayList<Point>();
+		f.add(points.get(0));
+		Point s = null;
 
-	public Point mostPowerful(List<T> vertices) {
-		T most = vertices.get(0);
-		for (T p : vertices) {
-			if (!p.equals(most) && neighbors(most, vertices).size() < neighbors(p, vertices).size())
-				most = p;
+		while (!f.isEmpty()) {
+			s = f.remove(0);
+			for (Point p : UDGraph.neighbors(s, points, edgeThreshold)) {
+				if (!marques.contains(p)) {
+					f.add(p);
+					marques.add(p);
+				}
+			}
 		}
-		return most;
-	}
 
-	public List<T> getFreeVertices(List<T> vertices) {
-		return vertices.stream().filter(p -> (neighbors(p, vertices)).size() == 0).collect(Collectors.toList());
+		return marques.stream().distinct().count() == points.stream().distinct().count();
 	}
-
-	public boolean isValid(List<T> ds, List<T> vertices) {
-		List<T> points = new ArrayList<>(vertices);
-		for(T p : ds){
-			points.removeAll(neighbors(p, points));
-			points.remove(p);
-		}
-		return points.isEmpty();
-	}
+	
 }
