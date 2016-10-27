@@ -9,37 +9,75 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import core.AlgoDominant;
 import core.S_MIS;
+import steiner.AlgoSteiner;
+import steiner.Tree2D;
 
 public class DefaultTeam {
 	public ArrayList<Point> calculConnectedDominatingSet(ArrayList<Point> points, int edgeThreshold) {
 
 		ArrayList<Point> result;
 		S_MIS mis = new S_MIS(edgeThreshold);
+		lancerTests(edgeThreshold);
 		result = mis.constructCDS(points);
 		return result;
 	}
 
+//	public ArrayList<Point> calculConnectedDominatingSet(ArrayList<Point> points, int edgeThreshold) {
+//		System.out.println("seuil " + edgeThreshold);
+//		ArrayList<Point> result = new ArrayList<Point>();
+//		AlgoDominant algo = new AlgoDominant(edgeThreshold);
+//		AlgoSteiner algoSteiner = new AlgoSteiner();
+//		ArrayList<Point> dom = algo.calculDominatingSet(points);
+//		Tree2D resultSteiner = algoSteiner.calculSteiner(points, edgeThreshold, dom);
+//		result.addAll(dom);
+//		result.addAll(resultSteiner.getList());
+//		Set<Point> s = new HashSet<Point>(result);
+//
+//		return new ArrayList<Point>(s);
+//
+//	}
 	
 	public void lancerTests(int edgeThreshold){
 		final String fichier = "testbeds/input";
 		List<Point> resultat = null;
+		List<Point> resultat2 = null;
 		List<Point> points = null;
 		S_MIS mis = new S_MIS(edgeThreshold);
+		AlgoDominant algo = new AlgoDominant(edgeThreshold);
+		AlgoSteiner algoSteiner = new AlgoSteiner();
 		long time = 0;
 		// point.x ==> size of mis ,  point.y ==> time execution
 		List<Point> tests = new ArrayList<>();
+		List<Point> tests2 = new ArrayList<>();
 		for (int i = 0; i < 100; i++) {
 			points = readFromFile( fichier + i + ".points");
+			
+			// smis
+//			time = System.currentTimeMillis();
+//			resultat = mis.constructCDS(points);
+//			time = System.currentTimeMillis()-time;
+//			tests.add(new Point(resultat.size(),(int) time));
+//			System.out.println(fichier + i + " >>>  teste ...");
+			
+			// steiner
 			time = System.currentTimeMillis();
-			resultat = mis.constructCDS(points);
+			List<Point> dom = algo.calculDominatingSet(points);
+			Tree2D resultSteiner = algoSteiner.calculSteiner(points, edgeThreshold, dom);
+			resultat2.addAll(dom);
+			resultat2.addAll(resultSteiner.getList());
+			Set<Point> s = new HashSet<Point>(resultat2);
+			resultat2 = new  ArrayList<Point>(s);
 			time = System.currentTimeMillis()-time;
-			tests.add(new Point(resultat.size(),(int) time));
-			System.out.println(fichier + i + " >>>  teste ...");
+			tests2.add(new Point(resultat.size(),(int) time));
+			System.out.println(fichier + i + " steiner >>>  teste ...");
 		}
-		saveToFile("test_resultat/mis", tests);
+		saveToFile("test_resultat/steiner", tests);
 	}
 	
 	// FILE PRINTER
