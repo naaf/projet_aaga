@@ -2,6 +2,7 @@ package core;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class UDGraph {
@@ -13,6 +14,18 @@ public class UDGraph {
 				neighbors.add(p);
 		}
 		return neighbors;
+	}
+	
+	/**
+	 * 
+	 * @param points
+	 * @param edgeThreshold
+	 * @return point the node most connected
+	 */
+	public static <T extends Point> T getPPC(List<T> points,  int edgeThreshold) {
+		final Comparator<T> comp = (p1, p2) -> Integer.compare(neighbors(p1, points, edgeThreshold).size(),
+				neighbors(p2, points, edgeThreshold).size());
+		return points.stream().max(comp).get();
 	}
 	
 	public static boolean isConnexe(List<Point> points, int edgeThreshold) {

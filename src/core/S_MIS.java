@@ -32,40 +32,31 @@ public class S_MIS {
 		psMIS.forEach(p -> {
 			p.setNeighbors(neighbors(p, psMIS, edgeThreshold));
 		});
-
 		Random r = new Random();
-
 		// We also designate a host as the leader.
 		PointMIS pointDom = psMIS.get(r.nextInt(psMIS.size()));
 		pointDom.setC(Color.BLACK);
-
 		while (true) {
 			if (psMIS.stream().noneMatch(p -> p.getC() == Color.WHITE)) {
 				break;
 			}
-
 			// black broadcasts message DOMINATOR
 			for (PointMIS p : pointDom.getNeighbors()) {
 				if (p.getC() == Color.WHITE) {
 					p.setC(Color.GRAY);
-
 					// white broadcasts message DOMINATEE.
 					p.getNeighbors().stream().filter(q -> q.getC() == Color.WHITE).forEach(q -> {
 						q.setActive(true);
 					});
 				}
 			}
-
 			// An active white host with highest (d*, id)
 			// among all of its active white neighbors will color itself black
-
 			pointDom = psMIS.stream().filter(p -> p.getC() == Color.WHITE && p.isActive())
 					.max((u, v) -> Long.compare(u.degree(), v.degree())).get();
 			pointDom.setC(Color.BLACK);
 
 		}
-		// in a unit disk graph, every node is adjacent to at most
-		// five independent nodes
 
 		return psMIS;
 	}
@@ -90,14 +81,9 @@ public class S_MIS {
 	}
 
 	public List<PointMIS> algorithmA(List<PointMIS> psMIS) {
-
-		List<PointMIS> psBlack = new ArrayList<>();
-		List<PointMIS> psBlue = new ArrayList<>();
+		List<PointMIS> psBlack = new ArrayList<>(); List<PointMIS> psBlue = new ArrayList<>();
 		PointMIS grayToBlue = null;
-		int smallestID;
-		int id = 1;
-		int voisinID;
-
+		int smallestID; int id = 1; int voisinID;
 		for (PointMIS p : psMIS) {
 			if (p.getC() == Color.BLACK) {
 				psBlack.add(p);
@@ -108,14 +94,10 @@ public class S_MIS {
 			}
 			p.setNeighbors(neighbors(p, psMIS, edgeThreshold));
 		}
-
 		for (int i = 5; i >= 2; i--) {
-
 			while ((grayToBlue = grayConnectKBlack(psBlack, psMIS, i)) != null) {
 				grayToBlue.setC(Color.BLUE);
 				psBlue.add(grayToBlue);
-
-				// smallest id from neighbors black
 				smallestID = grayToBlue.getNeighbors().stream().filter(n -> n.getC() == Color.BLACK).map(p -> p.getId())
 						.min((u, v) -> Integer.compare(u, v)).get();
 				grayToBlue.setId(smallestID);

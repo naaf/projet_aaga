@@ -115,11 +115,11 @@ public class Line {
 		 
 		 Point intersec = cToc2.intersection(bTob2);
 		 
-		System.out.println(c2 +" "+b2); 
+		//System.out.println(c2 +" "+b2); 
 		
-		System.out.println(intersec);
+		//System.out.println(intersec);
 		
-		System.out.println(l2.angleBetween2Lines(l1));
+		//System.out.println(l2.angleBetween2Lines(l1));
 		
 		
 

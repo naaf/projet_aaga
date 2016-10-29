@@ -18,7 +18,7 @@ public class Algorithmes {
 	    double distTmp;
 	    int dist;
 	    int taille = points.size();
-	    System.out.println("Taille : "+points.size());
+	    //System.out.println("Taille : "+points.size());
 	    int[][] tailleLiaison= new int[taille][taille];
 	    int[][] paths=new int[taille][taille];
 	   
@@ -64,7 +64,7 @@ public class Algorithmes {
 			for(int i=0; i<taille; i++)
 				tabEtiquette[i]=i;
 			
-			System.out.println("Fin intialisation etiquette ");
+			//System.out.println("Fin intialisation etiquette ");
 
 			for(int i=0; i<taille; i++){
 				for (int j=0; j<taille; j++) {
@@ -77,7 +77,7 @@ public class Algorithmes {
 			
 			
 			Collections.sort(aretes, Collections.reverseOrder());
-			System.out.println("Fin tri arete");
+			//System.out.println("Fin tri arete");
 			
 			int posA, posB, tmpVal;
 			for(int i=0; i<aretes.size(); i++){
@@ -100,7 +100,7 @@ public class Algorithmes {
 
 			}
 			taille = solution.size();
-			System.out.println("Fin solution arete");
+			//System.out.println("Fin solution arete");
 			//System.out.println(taille);
 			
 			return solution;

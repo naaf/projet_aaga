@@ -19,7 +19,6 @@ public class AlgoSteiner {
 		distance = Double.MAX_VALUE;
 		
 		result = conversion.krukalToTree(solutionTmp);
-		System.out.println();
 		newDistance = algo.countDistance(result);
 		
 		/*calcul de fermat **/
@@ -28,7 +27,6 @@ public class AlgoSteiner {
 			resultTmp = result;
 			distance = newDistance;
 			fermat.clear();
-			System.out.println(hitPoints.size());
 			/*algo.optimisationFermat(result, fermat);
 			algo.ajoutPoint(hitPoints, fermat);
 			algo.ajoutPoint(points, fermat);*/
@@ -37,7 +35,7 @@ public class AlgoSteiner {
 			result = conversion.krukalToTree(solutionTmp);
 			
 			newDistance = algo.countDistance(result);
-			System.out.println(newDistance);
+			//System.out.println(newDistance);
 		}
 		
 		result = resultTmp;
@@ -46,7 +44,7 @@ public class AlgoSteiner {
 		
 		
 		/*pointsFermatGlobal = algo.optimisationFermatGobal(hitPoints, edgeThreshold);
-		System.out.println(pointsFermatGlobal.size());
+		//System.out.println(pointsFermatGlobal.size());
 		points.addAll(pointsFermatGlobal);*/
 		
 		while(newDistance < distance){
@@ -61,11 +59,11 @@ public class AlgoSteiner {
 			result = conversion.krukalToTree(solutionTmp);
 			
 			newDistance = algo.countDistance(result);
-			System.out.println(newDistance);
+			//System.out.println(newDistance);
 		}
 		
 		
-		System.out.println(algo.countDistance(resultTmp));
+		//System.out.println(algo.countDistance(resultTmp));
 		return resultTmp;
 		
 	}
@@ -83,7 +81,7 @@ public Tree2D calculSteinerBudget(ArrayList<Point> points, int edgeThreshold, Ar
 		distance = Double.MAX_VALUE;
 		
 		result = conversion.krukalToTree(solutionTmp);
-		System.out.println();
+		//System.out.println();
 		newDistance = algo.countDistance(result);
 		
 		/*calcul de fermat **/
@@ -92,7 +90,7 @@ public Tree2D calculSteinerBudget(ArrayList<Point> points, int edgeThreshold, Ar
 			resultTmp = result;
 			distance = newDistance;
 			fermat.clear();
-			System.out.println(hitPoints.size());
+			//System.out.println(hitPoints.size());
 			algo.optimisationFermat(result, fermat);
 			algo.ajoutPoint(hitPoints, fermat);
 			algo.ajoutPoint(points, fermat);
@@ -101,7 +99,7 @@ public Tree2D calculSteinerBudget(ArrayList<Point> points, int edgeThreshold, Ar
 			result = conversion.krukalToTree(solutionTmp);
 			
 			newDistance = algo.countDistance(result);
-			System.out.println(newDistance);
+			//System.out.println(newDistance);
 		}
 		
 		result = resultTmp;
@@ -111,7 +109,7 @@ public Tree2D calculSteinerBudget(ArrayList<Point> points, int edgeThreshold, Ar
 		
 		
 		pointsFermatGlobal = algo.optimisationFermatGobal(hitPoints, edgeThreshold);
-		System.out.println(pointsFermatGlobal.size());
+		//System.out.println(pointsFermatGlobal.size());
 		points.addAll(pointsFermatGlobal);
 		
 		while(newDistance < distance){
@@ -126,11 +124,11 @@ public Tree2D calculSteinerBudget(ArrayList<Point> points, int edgeThreshold, Ar
 			result = conversion.krukalToTree(solutionTmp);
 			
 			newDistance = algo.countDistance(result);
-			System.out.println(newDistance);
+			//System.out.println(newDistance);
 		}
 		
 		
-		System.out.println(algo.countDistance(resultTmp));
+		//System.out.println(algo.countDistance(resultTmp));
 		return resultTmp;
 		
 	}
@@ -156,7 +154,7 @@ public Tree2D calculSteinerBudget(ArrayList<Point> points, int edgeThreshold, Ar
 			
 			arbre = calculSteinerBudget(points, edgeThreshold, newHitPoint, 1664);
 			distance = algo.countDistance(arbre);
-			System.out.println(distance);
+			//System.out.println(distance);
 		}
 		
 

@@ -49,7 +49,6 @@ public class AlgoDominant {
 
 	public ArrayList<PointPond> glouton(List<PointPond> points) {
 
-		System.out.println("edgeThreshold ==" + edgeThreshold);
 
 		List<PointPond> ps = new ArrayList<>(points);
 		List<PointPond> ensDominant = getPPI(points);

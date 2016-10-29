@@ -1,5 +1,6 @@
 package algorithms;
 
+import java.awt.Color;
 import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -9,87 +10,87 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.stream.Collectors;
 
-import steiner.AlgoSteiner;
-import steiner.Tree2D;
 import core.AlgoDominant;
 import core.S_MIS;
+import core.UDGraph;
+import steiner.AlgoSteiner;
 
 public class DefaultTeam {
 	public ArrayList<Point> calculConnectedDominatingSet(ArrayList<Point> points, int edgeThreshold) {
-
-		lancerTests(edgeThreshold);
-		ArrayList<Point> result;
+		ArrayList<Point> result = null;
+		ArrayList<Point> resultBlack;
+		// Gen.genTestBeds(edgeThreshold);
+		// lancerTests(edgeThreshold);
+		System.out.println("point plus connectes ==> " + UDGraph.neighbors(UDGraph.getPPC(points, edgeThreshold),points, edgeThreshold).size());
 		S_MIS mis = new S_MIS(edgeThreshold);
+		resultBlack = (ArrayList<Point>) mis.mis(points).stream().filter(p -> p.getC() == Color.BLACK)
+				.map(p -> (Point) p).collect(Collectors.toList());
 		result = mis.constructCDS(points);
+		System.out.println("is connexe " + UDGraph.isConnexe(result, edgeThreshold));
+		System.out.println(" result " + result.size());
 		return result;
 	}
 
-//	public ArrayList<Point> calculConnectedDominatingSet(ArrayList<Point> points, int edgeThreshold) {
-//		System.out.println("seuil " + edgeThreshold);
-//		ArrayList<Point> result = new ArrayList<Point>();
-//		long time = System.currentTimeMillis();
-//		AlgoDominant algo = new AlgoDominant(edgeThreshold);
-//		ArrayList<Point> dom = algo.calculDominatingSet(points);
-//		AlgoSteiner algoSteiner = new AlgoSteiner();
-//		Tree2D resultSteiner = algoSteiner.calculSteiner(points, edgeThreshold, dom);
-//		time = System.currentTimeMillis()-time;
-//		System.out.println(">>>>>>> time " + time);
-//		result.addAll(dom);
-//		result.addAll(resultSteiner.getList());
-//		Set<Point> s = new HashSet<Point>(result);
-//
-//		return new ArrayList<Point>(s);
-//
-//	}
-	
-	public void lancerTests(int edgeThreshold){
+	public void testSMIS(int edgeThreshold) {
 		final String fichier = "testbeds/input";
-		List<Point> points = null;
 		S_MIS mis = new S_MIS(edgeThreshold);
-		AlgoSteiner algoSteiner ;
-		AlgoDominant algo = new AlgoDominant(edgeThreshold);;
 		long time = 0;
-		// point.x ==> size of mis ,  point.y ==> time execution
 		List<Point> pointsMis = new ArrayList<>();
-		List<Point> pointsSteiner = new ArrayList<>();
 		List<Point> testsSMIS = new ArrayList<>();
-		List<Point> testsSteiner = new ArrayList<>();
-		List<Point> dom;
-		Tree2D resultSteiner;
-		Set<Point> s ;
+		List<Point> points;
 		for (int i = 0; i < 100; i++) {
-			points = readFromFile( fichier + i + ".points");
-			System.out.println(" debut test smis" + i + " size >>" + points.size());
-			algoSteiner = new AlgoSteiner();
-			
-			// smis
-//			time = System.currentTimeMillis();
-//			pointsMis = mis.constructCDS(points);
-//			time = System.currentTimeMillis()-time;
-//			testsSMIS.add(new Point(pointsMis.size(),(int) time));
-//			System.out.println(fichier + i + " >>> fin teste  smis...");
-			
-			// steiner
+			points = readFromFile(fichier + i + ".points");
 			time = System.currentTimeMillis();
-			dom = algo.calculDominatingSet((ArrayList<Point>) points);
-			resultSteiner = algoSteiner.calculSteiner(points, edgeThreshold, dom);
-			pointsSteiner.addAll(dom);
-			pointsSteiner.addAll(resultSteiner.getList());
-			s = new HashSet<Point>(pointsSteiner);
-			pointsSteiner = new  ArrayList<Point>(s);
-			time = System.currentTimeMillis()-time;
-			testsSteiner.add(new Point(pointsSteiner.size(),(int) time));
-			System.out.println(fichier + i + " >>> fin teste  steiner...");
+			pointsMis = mis.constructCDS(points);
+			time = System.currentTimeMillis() - time;
+			testsSMIS.add(new Point(pointsMis.size(), (int) time));
+			System.out.println(fichier + i + " >>> fin teste  smis " + pointsMis.size());
 		}
-		System.out.println(" fin total tests >>>>>> ");
-		saveToFile("test_resultat/steiner", testsSteiner);
-//		saveToFile("test_resultat/smis", testsSteiner);
+		saveToFile("test_resultat/smis", testsSMIS);
 	}
-	
+
+	public List<Point> algoNaive(List<Point> points, int edgeThreshold) {
+		List<Point> pointsSteiner = new ArrayList<>();
+		List<Point> dom;
+
+		AlgoDominant algo = new AlgoDominant(edgeThreshold);
+		AlgoSteiner algoSteiner = new AlgoSteiner();
+
+		dom = algo.calculDominatingSet((ArrayList<Point>) points);
+		pointsSteiner = algoSteiner.calculSteiner(points, edgeThreshold, dom).getList();
+		pointsSteiner.addAll(dom);
+
+		return pointsSteiner.stream().distinct().collect(Collectors.toList());
+	}
+
+	public void testAlgoNaive(int edgeThreshold) {
+		final String fichier = "testbeds/input";
+		long time = 0;
+		List<Point> testsSteiner = new ArrayList<>();
+		List<Point> pointsSteiner;
+		List<Point> points;
+		for (int i = 0; i < 100; i++) {
+			points = readFromFile(fichier + i + ".points");
+			time = System.currentTimeMillis();
+			pointsSteiner = algoNaive(points, edgeThreshold);
+			time = System.currentTimeMillis() - time;
+
+			testsSteiner.add(new Point(pointsSteiner.size(), (int) time));
+			System.out.println(fichier + i + " >>> fin teste  steiner >>> " + pointsSteiner.size());
+		}
+		saveToFile("test_resultat/steiner", testsSteiner);
+	}
+
+	public void lancerTests(int edgeThreshold) {
+		testAlgoNaive(edgeThreshold);
+		testSMIS(edgeThreshold);
+		System.out.println(" fin total tests >>>>>> ");
+
+	}
+
 	// FILE PRINTER
 	public static void saveToFile(String filename, List<Point> result) {
 		int index = 0;
@@ -110,14 +111,42 @@ public class DefaultTeam {
 		}
 	}
 
-	
-	
+	public static void saveToFile2(String filename, List<String> result) {
+		int index = 0;
+		try {
+			while (true) {
+				BufferedReader input = new BufferedReader(
+						new InputStreamReader(new FileInputStream(filename + ".points")));
+				try {
+					input.close();
+				} catch (IOException e) {
+					System.err.println(
+							"I/O exception: unable to close " + filename + Integer.toString(index) + ".points");
+				}
+				index++;
+			}
+		} catch (FileNotFoundException e) {
+			printToFile2(filename + ".points", result);
+		}
+	}
+
 	public static void printToFile(String filename, List<Point> points) {
 		try {
 			PrintStream output = new PrintStream(new FileOutputStream(filename));
 			int x, y;
 			for (Point p : points)
 				output.println(Integer.toString((int) p.getX()) + " " + Integer.toString((int) p.getY()));
+			output.close();
+		} catch (FileNotFoundException e) {
+			System.err.println("I/O exception: unable to create " + filename);
+		}
+	}
+
+	public static void printToFile2(String filename, List<String> points) {
+		try {
+			PrintStream output = new PrintStream(new FileOutputStream(filename));
+			for (String p : points)
+				output.println(p);
 			output.close();
 		} catch (FileNotFoundException e) {
 			System.err.println("I/O exception: unable to create " + filename);
